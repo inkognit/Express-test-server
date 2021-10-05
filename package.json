@@ -1,0 +1,14 @@
+{
+  "name": "express-test-server",
+  "version": "1.0.0",
+  "description": "test server",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "keywords": [
+    "123"
+  ],
+  "author": "michael",
+  "license": "ISC"
+}
