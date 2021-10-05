@@ -1,16 +1,19 @@
 import express from 'express';
+import path from 'path'
 // const fs = require('fs').readFileSync()
 const app = express()
 
 const HOST = 'localhost';
 const PORT = 4200
-
+const __dirname = path.resolve()
+console.log(__dirname)
 
 app.get('/', (req, res) => {
-    // res.status(200)
-    res.send('<h1>Hello World!!!</h1>')
+    res.sendFile(path.resolve(__dirname, 'myPage', 'mainPage.html'))
 })
-// const server
+app.get('/features/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'myPage', 'features.html'))
+})
 app.listen(
     PORT,
     HOST,
