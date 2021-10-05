@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "test server",
   "main": "server.js",
-  "scripts": {
-    "test": "node server.js"
-  },
+  "type": "module",
   "keywords": [
     "123"
   ],
   "author": "michael",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "nodemon": "^2.0.13",
+    "prisma": "^3.2.0"
+  }
 }

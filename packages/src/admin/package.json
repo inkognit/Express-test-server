@@ -1,0 +1,13 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server/server.js",
+    "serve": "nodemon server/server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
