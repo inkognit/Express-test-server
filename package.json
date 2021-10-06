@@ -10,6 +10,8 @@
   "author": "michael",
   "license": "ISC",
   "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
     "colors": "^1.4.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1"
@@ -18,5 +20,16 @@
     "@types/express": "^4.17.13",
     "nodemon": "^2.0.13",
     "prisma": "^3.2.0"
-  }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inkognit/Express-test-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/inkognit/Express-test-server/issues"
+  },
+  "homepage": "https://github.com/inkognit/Express-test-server#readme"
 }
