@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "admin ver",
   "main": "index.js",
-    "type": "module",
+  "type": "module",
   "scripts": {
     "dev": "nodemon server/server.js",
     "start": "node server/server.js"
@@ -12,5 +12,8 @@
     "123"
   ],
   "author": "michael",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.4.3"
+  }
 }
