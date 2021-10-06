@@ -1,9 +1,9 @@
 import { Router } from "express";
+import { getAll, create } from './controllers/servers.js'
+var router = Router();
 
-const router = Router();
+router.get('/api/server', getAll);
 
-router.get('/api/server', (req, res) => {
-    res.json({ test: 42 })
-})
+router.post('/api/server', create);
 
-export default router 
+export default router;

@@ -1,13 +1,16 @@
 {
   "name": "admin",
   "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "server.js",
+  "description": "admin ver",
+  "main": "index.js",
+    "type": "module",
   "scripts": {
-    "dev": "node server/server.js",
-    "serve": "nodemon server/server.js"
+    "dev": "nodemon server/server.js",
+    "start": "node server/server.js"
   },
-  "author": "",
+  "keywords": [
+    "123"
+  ],
+  "author": "michael",
   "license": "ISC"
 }
