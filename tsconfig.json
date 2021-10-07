@@ -1,5 +1,5 @@
 {
-  // "files": ["./server/server.ts"],
+  "files": ["./server/server.ts"],
   "include": ["server/**/*"],
   "exclude": ["node_modules", "server/**/*.spec.ts"],
   "compilerOptions": {

@@ -14,8 +14,7 @@ app.get('/', async (req, res) => {
 })
 
 const PORT = env.PORT ?? 4200
-console.log(env.PORT)
-// console.log(env.NODE_ENV)
+
 app.use(serverRoutes)
 
 app.listen(PORT, () =>
