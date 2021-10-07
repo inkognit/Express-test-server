@@ -18,19 +18,26 @@ model Users {
   last_name   String
   description String
   birthday    DateTime
-
+  role         Role             @default(USER)
+  userPass    UserPass?
 }
+
 
 model UserPass {
   id         String   @id @default(cuid())
   created_at DateTime
   user_id    String
+  Users      Users     @relation(fields: [user_id], references: [id])
   pass       String
-  // Users      Users    @relation([id, user_id])
 }
 
 model Orders {
   id           String @id @default(cuid())
   descriptions String
 
+}
+
+enum Role {
+  USER
+  ADMIN
 }
