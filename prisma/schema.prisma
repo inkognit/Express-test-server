@@ -10,31 +10,30 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Users {
+model User {
   id          String   @id @default(cuid())
-  created_at  DateTime
+  created_at  DateTime @default(now())
   nick_name   String
   first_name  String
   last_name   String
   description String
   birthday    DateTime
-  role         Role             @default(USER)
-  userPass    UserPass?
+  role        Role     @default(USER)
+  userPass    UserPass @relation(fields: [pass_id], references: [id])
+  pass_id     String   @unique
 }
-
 
 model UserPass {
   id         String   @id @default(cuid())
-  created_at DateTime
+  created_at DateTime @default(now())
   user_id    String
-  Users      Users     @relation(fields: [user_id], references: [id])
+  user       User?
   pass       String
 }
 
 model Orders {
   id           String @id @default(cuid())
   descriptions String
-
 }
 
 enum Role {

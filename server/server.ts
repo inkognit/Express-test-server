@@ -1,31 +1,17 @@
-import express from 'express'
+import express, { Express } from 'express'
 import serverRoutes from './controllers/servers'
 import { env } from 'process'
-// import { getFunc } from './index'
+
+import { getFunc } from './middlewares/middlewares'
 require('dotenv').config()
 
-// import { PrismaClient } from '@prisma/client'
-// const prisma = new PrismaClient()
-const app = express()
+const app: Express = express()
 
-const PATH = (__dirname: any): string => {
-  const path = __dirname.split('/')
-  const newPath = path.slice(0, path.length - 1)
-  return newPath.join('/')
-}
-
-app.get('/', async (req, res) => {
-  console.log('wtf?!?!?!?!?')
-  res.sendFile(PATH(__dirname) + '/pages/accountPage/mainPage.html')
-})
-
-// getFunc('/auth.html', 'accountPage/auth.html')
-app.get('/auth.html', async (req, res) => {
-  res.sendFile(PATH(__dirname) + `/pages/accountPage/auth.html`)
-})
-const PORT = env.PORT ?? 4200
-
+app.use(getFunc('/', 'accountPage/mainPage.html'))
+app.use(getFunc('/auth.html', 'accountPage/auth.html'))
 app.use(serverRoutes)
+
+const PORT = env.PORT ?? 4200
 
 app.listen(PORT, () =>
   console.log(
