@@ -12,6 +12,7 @@ const PATH = (__dirname: any): string => {
 
 export const getFunc = (rout: string, filePath: string) => {
   return app.get(rout, async (req, res) => {
+    res.contentType('text/html')
     res.status(200)
     res.sendFile(PATH(__dirname) + `/pages/` + filePath)
   })

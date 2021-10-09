@@ -1,5 +1,5 @@
 import express, { Express } from 'express'
-import serverRoutes from './controllers/servers'
+import authRoutes from './controllers/servers'
 import { env } from 'process'
 
 import { getFunc } from './middlewares/middlewares'
@@ -9,7 +9,9 @@ const app: Express = express()
 
 app.use(getFunc('/', 'accountPage/mainPage.html'))
 app.use(getFunc('/auth.html', 'accountPage/auth.html'))
-app.use(serverRoutes)
+
+app.use(express.json())
+app.use('/auth', authRoutes)
 
 const PORT = env.PORT ?? 4200
 
