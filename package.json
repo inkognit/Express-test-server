@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/css": "^0.0.33",
     "@types/express": "^4.17.13",
-    "nodemon": "^2.0.13",
+    "ts-node-dev": "^1.1.6",
     "prisma": "^3.2.1"
   },
   "scripts": {
@@ -41,7 +41,7 @@
     "preserve": "npm run build",
     "start": "node ./build/server.js",
     "start/build": "npm run build && npm run start",
-    "dev": "ts-node  ./server/server.ts",
+    "dev": "ts-node-dev ./server/server.ts",
     "generate": "prisma generate --schema=./prisma/schema.prisma"
   },
   "repository": {
