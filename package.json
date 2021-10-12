@@ -39,7 +39,7 @@
     "migrate": "prisma migrate dev",
     "build": "rimraf dist && tsc",
     "preserve": "npm run build",
-    "start": "node ./build/server.js",
+    "start": "node ./dist/server.js",
     "start/build": "npm run build && npm run start",
     "dev": "ts-node-dev ./server/server.ts",
     "generate": "prisma generate --schema=./prisma/schema.prisma"
