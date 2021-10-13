@@ -1,5 +1,5 @@
 import express, { Express } from 'express'
-import authRoutes from './middlewares/registration'
+import authRoutes from './controllers/routes'
 import { env } from 'process'
 
 require('dotenv').config()
