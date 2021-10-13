@@ -71,12 +71,23 @@
       </tr>
     </table>
     <p>
-      <a href="/">
-        <input type="submit" name="cansel" value="Отмена" />
-      </a>
-      <a href="/">
-        <input type="submit" name="createUser" value="Создать" />
-      </a>
+      <input type="submit" name="cansel" value="Отмена" />
+
+      <input id="1" type="submit" name="createUser" value="Создать" />
     </p>
+    <div id="data"></div>
+    <script>
+      const buttonEl = document.getElementById('1')
+      buttonEl.addEventListener('click', async () => {
+        const response = await fetch('/json', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        const res = await response.json()
+        console.log(res)
+        const el = document.getElementById('data')
+        el.innerHTML = `<div style="color:red">${res.name}</div>`
+      })
+    </script>
   </body>
 </html>

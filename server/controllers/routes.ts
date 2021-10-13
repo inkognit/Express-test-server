@@ -4,7 +4,7 @@ import controller from './authController'
 
 const router = Router()
 router.get('/user', controller.getUser)
-router.post('/login', controller.login)
+router.get('/login', controller.login)
 router.post('/registration', controller.registration)
 
 export default router
