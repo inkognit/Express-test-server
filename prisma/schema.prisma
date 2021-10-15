@@ -16,7 +16,7 @@ model User {
   last_name   String?
   description String?
   email       String    @unique
-  birthday    DateTime
+  birthday    DateTime? @default(now())
   role        Role      @default(USER)
   password    UserPass?
   avatar      String    @default("")
@@ -25,13 +25,15 @@ model User {
 model UserPass {
   id         String   @id @default(cuid())
   password   String
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
   user_id    String   
   user       User     @relation(fields: [user_id], references: [id])
 }
 
 model Orders {
-  id           String @id @default(cuid())
+  id           String   @id @default(cuid())
+  name         String
+  created_at   DateTime @default(now())
   descriptions String
 }
 

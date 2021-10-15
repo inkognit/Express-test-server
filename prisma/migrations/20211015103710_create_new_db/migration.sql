@@ -4,14 +4,14 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'WRITER');
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "php_id" TEXT NOT NULL,
+    "idx" SERIAL NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "nick_name" TEXT NOT NULL,
     "first_name" TEXT,
     "last_name" TEXT,
     "description" TEXT,
     "email" TEXT NOT NULL,
-    "birthday" TIMESTAMP(3) NOT NULL,
+    "birthday" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "role" "Role" NOT NULL DEFAULT E'USER',
     "avatar" TEXT NOT NULL DEFAULT E'',
 
@@ -22,7 +22,7 @@ CREATE TABLE "User" (
 CREATE TABLE "UserPass" (
     "id" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_id" TEXT NOT NULL,
 
     CONSTRAINT "UserPass_pkey" PRIMARY KEY ("id")
@@ -35,6 +35,9 @@ CREATE TABLE "Orders" (
 
     CONSTRAINT "Orders_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_idx_key" ON "User"("idx");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_nick_name_key" ON "User"("nick_name");
