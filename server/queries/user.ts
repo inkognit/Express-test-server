@@ -58,10 +58,11 @@ export type TUserCreate_db = PQVN<
     description: string
     birthday: Date | string
     email: string
-    password: any
+    pass: any
   }
 >
 export const userCreate: TUserCreate_db = async (args) => {
+  console.log(args)
   const user = await prisma.user.create({
     data: {
       nick_name: args.nick_name,
@@ -72,7 +73,7 @@ export const userCreate: TUserCreate_db = async (args) => {
       email: args.email,
       password: {
         create: {
-          password: args.password || 'pass',
+          password: args.pass,
         },
       },
     },

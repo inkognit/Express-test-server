@@ -13,7 +13,6 @@ router.use(get('/user.html', 'accountPage/user.html'))
 // router.use(post('/create_user', userCreate))
 router.post('/json', async (req, res) => {
   userCreate(req.body)
-  console.log(req.body)
   res.header({ 'Content-Type': 'application/json' })
   res.status(201)
 })
