@@ -16,9 +16,9 @@ export type TPageUsers_item = {
   id?: string
   created_at: any
   nick_name: string
-  first_name: string
-  last_name: string
-  description: string
+  first_name: string | null
+  last_name: string | null
+  description: string | null
   birthday: any
   role?: EUserRole
 }
@@ -37,13 +37,12 @@ export type TPageUsers_load = QV<TPageUsers, TPageUsers_vars>
 
 export type TPageUser_item = {
   id?: string
-  created_at: any
-  nick_name: string
-  first_name: string
-  last_name: string
-  description: string
-  birthday: any
-  role?: EUserRole
+  created_at?: Date
+  nick_name?: string
+  first_name?: string | null
+  last_name?: string | null
+  description?: string | null
+  birthday?: Date | null
 }
 export type TPageUser = {
   user: TPageUser_item
