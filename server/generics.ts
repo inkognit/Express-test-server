@@ -12,7 +12,7 @@ type TQprops = {
 
 export type PQ<T> = (p: TQprops) => Promise<T>
 export type PQV<T, V> = (p: TQprops, vars: V) => Promise<T>
-export type PQVN<T, V> = (p: TQprops, vars: V) => Promise<T | null>
+export type PQVN<T, V> = (vars: V) => Promise<T | null>
 
 // export type QV<T, V> = (prisma: T, args2: V) => T & V
 
