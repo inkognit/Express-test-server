@@ -15,6 +15,14 @@ export const get = (rout: string, filePath: string) => {
   })
 }
 
+export const post = (rout: string, func: any) => {
+  return router.post(rout, async (req, res) => {
+    res.contentType('application/json')
+    res.status(201)
+    func(req.body)
+  })
+}
+
 // export const getAll = (req: any, res: any) => {
 //   res.status(200).json({})
 // }

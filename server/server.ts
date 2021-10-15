@@ -11,7 +11,8 @@ app.use('/', authRoutes)
 app.use('/about.html', authRoutes)
 app.use('/auth.html', authRoutes)
 app.use('/registration.html', authRoutes)
-app.use('/json', authRoutes)
+// app.use('/json', authRoutes)
+app.use('/user.html', authRoutes)
 
 const PORT = env.PORT ?? 4200
 
