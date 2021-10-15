@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sing Up</title>
   </head>
+
   <body>
     <table
       border="1"
@@ -13,80 +14,130 @@
       style="width: 500px; border-radius: 5px;"
       bgcolor="#7FFFD4"
     >
-      <tr>
-        <th>
-          <label for="first_name">Ваше имя</label>
-        </th>
-        <th>
-          <input type="text" name="first_name" placeholder="Имя" required />
-        </th>
-      </tr>
-      <tr>
-        <th>
-          <label for="last_name">Фамилия</label>
-        </th>
-        <th>
-          <input type="text" name="last_name" placeholder="Фамилия" required />
-        </th>
-      </tr>
-      <tr>
-        <th>
-          <label for="nick_name">Ваш ник</label>
-        </th>
-        <th>
-          <input type="text" name="nick_name" placeholder="nickname" required />
-        </th>
-      </tr>
-      <tr>
-        <th>
-          <label for="description">О себе</label>
-        </th>
-        <th>
-          <input type="text" name="description" placeholder="О себе" />
-        </th>
-      </tr>
-      <tr>
-        <th>
-          <label for="email">email</label>
-        </th>
-        <th>
-          <input type="text" name="email" placeholder="email" required />
-        </th>
-      </tr>
-      <tr>
-        <th>
-          <label for="birthday">День рождения</label>
-        </th>
-        <th>
-          <input type="text" name="birthday" placeholder="день рождения" />
-        </th>
-      </tr>
-      <tr>
-        <th>
-          <label for="pass">Пароль</label>
-        </th>
-        <th>
-          <input type="text" name="pass" placeholder="Пароль" required />
-        </th>
-      </tr>
+      <form class="container" method="post">
+        <tr>
+          <th>
+            <label for="first_name">Ваше имя</label>
+          </th>
+          <th>
+            <input
+              type="text"
+              name="first_name"
+              placeholder="Имя"
+              onkeyup="handleInput(this)"
+              required
+            />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <label for="last_name">Фамилия</label>
+          </th>
+          <th>
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Фамилия"
+              onkeyup="handleInput(this)"
+              required
+            />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <label for="nick_name">Ваш ник</label>
+          </th>
+          <th>
+            <input
+              type="text"
+              name="nick_name"
+              placeholder="nickname"
+              required
+              onkeyup="handleInput(this)"
+            />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <label for="description">О себе</label>
+          </th>
+          <th>
+            <input
+              type="text"
+              name="description"
+              placeholder="О себе"
+              onkeyup="handleInput(this)"
+            />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <label for="email">email</label>
+          </th>
+          <th>
+            <input
+              type="text"
+              name="email"
+              placeholder="email"
+              required
+              onkeyup="handleInput(this)"
+            />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <label for="birthday">День рождения</label>
+          </th>
+          <th>
+            <input
+              type="date"
+              name="birthday"
+              placeholder="день рождения"
+              onkeyup="handleInput(this)"
+            />
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <label for="pass">Пароль</label>
+          </th>
+          <th>
+            <input
+              type="text"
+              name="pass"
+              placeholder="Пароль"
+              required
+              onkeyup="handleInput(this)"
+            />
+          </th>
+        </tr>
+      </form>
     </table>
     <p>
-      <input type="submit" name="cansel" value="Отмена" />
+      <input id="2" type="submit" name="cansel" value="Отмена" />
 
       <input id="1" type="submit" name="createUser" value="Создать" />
     </p>
     <div id="data"></div>
     <script>
+      const data = {}
+      function handleInput(e) {
+        data[e.name] = e.value
+      }
       const buttonEl = document.getElementById('1')
       buttonEl.addEventListener('click', async () => {
+        console.log(data.first_name)
+
         const response = await fetch('/json', {
-          method: 'GET',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
         })
         const res = await response.json()
         console.log(res)
+
         const el = document.getElementById('data')
-        el.innerHTML = `<div style="color:red">${res.name}</div>`
+        el.innerHTML = `<div style="color:red">${JSON.stringify(data)}</div>`
       })
     </script>
   </body>
