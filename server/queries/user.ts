@@ -5,8 +5,14 @@ import {
   TPageUser_vars,
 } from '../../pages/types'
 import { PrismaClient } from '.prisma/client'
-const prisma = new PrismaClient()
 import { PQV, PQVN } from '../../server/generics'
+import bcrypt from 'bcryptjs'
+import jwt, { Secret } from 'jsonwebtoken'
+import { env } from 'process'
+
+require('dotenv').config()
+
+const prisma = new PrismaClient()
 
 export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>
 export const users: TPageUsers_db = async ({ prisma }, args) => {
@@ -62,7 +68,8 @@ export type TUserCreate_db = PQVN<
   }
 >
 export const userCreate: TUserCreate_db = async (args) => {
-  alert('Вы зарегистрированны!')
+  const { email } = args
+  let encryptedPassword = await bcrypt.hash(args.pass, 10)
   const user = await prisma.user.create({
     data: {
       nick_name: args.nick_name,
@@ -73,11 +80,22 @@ export const userCreate: TUserCreate_db = async (args) => {
       email: args.email,
       password: {
         create: {
-          password: args.pass,
+          password: encryptedPassword,
         },
       },
     },
   })
+  const token = jwt.sign(
+    {
+      user_id: user.id,
+      email,
+    },
+    env.JWT_SECRET as Secret,
+    {
+      expiresIn: '2h',
+    },
+  )
+  user.token = token
   return user
 }
 
@@ -95,11 +113,11 @@ export const login = async (args: { login: string; pass: string }) => {
     select: { id: true },
   })
   if (user) {
-    const pass = await prisma.userPass.findUnique({
+    const password = await prisma.userPass.findUnique({
       where: { user_id: user.id },
       select: { password: true },
     })
-    if (pass === pass) {
+    if (args.pass === password?.password) {
       console.log('ok!')
       return true
     } else {
