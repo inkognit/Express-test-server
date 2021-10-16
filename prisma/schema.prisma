@@ -20,6 +20,7 @@ model User {
   role        Role      @default(USER)
   password    UserPass?
   avatar      String    @default("")
+  token       String    @default("")
 }
 
 model UserPass {
