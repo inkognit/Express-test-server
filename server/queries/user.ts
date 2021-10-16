@@ -62,7 +62,7 @@ export type TUserCreate_db = PQVN<
   }
 >
 export const userCreate: TUserCreate_db = async (args) => {
-  console.log(args)
+  alert('Вы зарегистрированны!')
   const user = await prisma.user.create({
     data: {
       nick_name: args.nick_name,
@@ -79,4 +79,28 @@ export const userCreate: TUserCreate_db = async (args) => {
     },
   })
   return user
+}
+
+export const login = async (args: {
+  nick_name?: string
+  email?: string
+  pass: string
+}) => {
+  const user = await prisma.user.findUnique({
+    where: { nick_name: args.nick_name } || { email: args.email },
+    select: { id: true },
+  })
+  if (user) {
+    const pass = await prisma.userPass.findUnique({
+      where: { user_id: user?.id },
+      select: { password: true },
+    })
+    if (pass === pass) {
+      return true
+    } else {
+      alert('Неправильно введен пароль!')
+    }
+  } else {
+    alert('Вы ввели неправильный логин или вашего аккаунта не существует!')
+  }
 }
