@@ -81,26 +81,33 @@ export const userCreate: TUserCreate_db = async (args) => {
   return user
 }
 
-export const login = async (args: {
-  nick_name?: string
-  email?: string
-  pass: string
-}) => {
+export const login = async (args: { login: string; pass: string }) => {
+  let email, nick
+
+  if (args.login.indexOf('@') > 0) {
+    email = args.login
+  } else {
+    nick = args.login
+  }
+
   const user = await prisma.user.findUnique({
-    where: { nick_name: args.nick_name } || { email: args.email },
+    where: nick ? { nick_name: nick } : { email: email },
     select: { id: true },
   })
   if (user) {
     const pass = await prisma.userPass.findUnique({
-      where: { user_id: user?.id },
+      where: { user_id: user.id },
       select: { password: true },
     })
     if (pass === pass) {
+      console.log('ok!')
       return true
     } else {
-      alert('Неправильно введен пароль!')
+      console.log('Неправильно введен пароль!')
     }
   } else {
-    alert('Вы ввели неправильный логин или вашего аккаунта не существует!')
+    console.log(
+      'Вы ввели неправильный логин или вашего аккаунта не существует!',
+    )
   }
 }

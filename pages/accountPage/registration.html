@@ -127,7 +127,7 @@
       }
       const buttonEl = document.getElementById('1')
       buttonEl.addEventListener('click', async () => {
-        console.log(data.first_name)
+        console.log(data)
 
         const response = await fetch('/create_user', {
           method: 'POST',

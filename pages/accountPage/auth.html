@@ -16,20 +16,42 @@
           type="text"
           name="login"
           placeholder="Логин или email"
+          onkeyup="toObj(this)"
           required
         />
       </p>
       <p>
         <label for="password">Пароль</label>
-        <input type="password" name="password" placeholder="Пароль" required />
+        <input
+          type="text"
+          name="pass"
+          placeholder="Пароль"
+          onkeyup="toObj(this)"
+          required
+        />
       </p>
 
       <p>
-        <input type="submit" name="submit" value="Продолжить" />
+        <input id="Auth" type="submit" name="submit" value="Продолжить" />
       </p>
     </form>
     <a href="./registration.html">
       <input type="submit" name="createUser" value="Регистрация" />
     </a>
+    <script>
+      const data = {}
+      const toObj = (e) => {
+        data[e.name] = e.value
+      }
+      const buttonEl = document.getElementById('Auth')
+      buttonEl.addEventListener('click', async () => {
+        console.log(data)
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        })
+      })
+    </script>
   </body>
 </html>
