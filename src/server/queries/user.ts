@@ -5,7 +5,7 @@ import {
   TPageUser_vars,
 } from '../../pages/types'
 import { PrismaClient } from '.prisma/client'
-import { PQV, PQVN } from '../../server/generics'
+import { PQV, PQVN } from '../generics'
 import bcrypt from 'bcryptjs'
 import jwt, { Secret } from 'jsonwebtoken'
 import { env } from 'process'
@@ -26,13 +26,14 @@ const generatorJWTToken = (
     nick_name,
     email,
   }
+
   return jwt.sign(payload, env.JWT_SECRET as Secret, {
-    expiresIn: '2h',
+    expiresIn: '24h',
   })
 }
 
 export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>
-export const users: TPageUsers_db = async ({ prisma }, args) => {
+export const users: TPageUsers_db = async (args) => {
   const [users, countWhere, countAll] = await Promise.all([
     prisma.user.findMany({
       where: args.where || undefined,
@@ -58,7 +59,7 @@ export const users: TPageUsers_db = async ({ prisma }, args) => {
 }
 
 export type TPageUser_db = PQV<TPageUser_item, TPageUser_vars>
-export const user: TPageUser_db = async ({ prisma }, args) => {
+export const user: TPageUser_db = async (args) => {
   const user = await prisma.user.findUnique({
     where: { id: args.id },
     select: {
@@ -85,8 +86,10 @@ export type TUserCreate_db = PQVN<
   }
 >
 export const userCreate: TUserCreate_db = async (args) => {
-  // const { email } = args
-  let encryptedPassword = await bcrypt.hash(args.pass, 10)
+  const encryptedPassword = await bcrypt.hash(args.pass, 10)
+  //проверка пароля на длину, отсутствие лишних символов
+  //проверка на такой ник или емайл
+  //сообщить юзеру что поменять
   const user = await prisma.user.create({
     data: {
       nick_name: args.nick_name,
@@ -102,17 +105,6 @@ export const userCreate: TUserCreate_db = async (args) => {
       },
     },
   })
-  // const token = jwt.sign(
-  //   {
-  //     user_id: user.id,
-  //     email,
-  //   },
-  //   env.JWT_SECRET as Secret,
-  //   {
-  //     expiresIn: '2h',
-  //   },
-  // )
-  // user.token = token
   return user
 }
 
@@ -124,7 +116,7 @@ export const login = async (args: { login: string; pass: string }) => {
   } else {
     nick = args.login
   }
-
+  //библиотека для валидации данных
   const user = await prisma.user.findUnique({
     where: nick ? { nick_name: nick } : { email: email },
     select: {
@@ -149,6 +141,7 @@ export const login = async (args: { login: string; pass: string }) => {
         )
         console.log(JSON.stringify(token))
         console.log('ok!')
+        //почитать про вывод ошибок на фронт
         return JSON.stringify(token)
       } else {
         console.log('Неправильно введен пароль!')

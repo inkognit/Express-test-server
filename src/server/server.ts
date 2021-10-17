@@ -6,7 +6,11 @@ require('dotenv').config()
 
 const app: Express = express()
 app.use(express.json())
-
+app.use((req, res, next) => {
+  console.log('start')
+  // извлечь payload и закинуть в "хранилище". к этому хранилищу имеет доступ каждый мидл(express context)
+  next()
+})
 app.use('/', authRoutes)
 app.use('/about.html', authRoutes)
 app.use('/auth.html', authRoutes)

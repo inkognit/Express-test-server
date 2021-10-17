@@ -1,7 +1,7 @@
 {
-  "files": ["./server/server.ts"],
-  "include": ["server/**/*"],
-  "exclude": ["node_modules", "server/**/*.spec.ts"],
+  "files": ["src/server/server.ts"],
+  "include": ["src/server/**/*"],
+  "exclude": ["node_modules", "src/server/**/*.spec.ts"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
@@ -34,7 +34,7 @@
     "module": "commonjs" /* Specify what module code is generated. */,
     // "rootDir": "./server" /* Specify the root folder within your source files. */,
     "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
-    "baseUrl": "./server" /* Specify the base directory to resolve non-relative module names. */,
+    "baseUrl": "src/server" /* Specify the base directory to resolve non-relative module names. */,
     // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [
