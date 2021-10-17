@@ -14,6 +14,23 @@ require('dotenv').config()
 
 const prisma = new PrismaClient()
 
+const generatorJWTToken = (
+  id: string,
+  roles: 'ADMIN' | 'USER' | 'WRITER',
+  nick_name: string,
+  email: string,
+) => {
+  const payload = {
+    id,
+    roles,
+    nick_name,
+    email,
+  }
+  return jwt.sign(payload, env.JWT_SECRET as Secret, {
+    expiresIn: '2h',
+  })
+}
+
 export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>
 export const users: TPageUsers_db = async ({ prisma }, args) => {
   const [users, countWhere, countAll] = await Promise.all([
@@ -68,7 +85,7 @@ export type TUserCreate_db = PQVN<
   }
 >
 export const userCreate: TUserCreate_db = async (args) => {
-  const { email } = args
+  // const { email } = args
   let encryptedPassword = await bcrypt.hash(args.pass, 10)
   const user = await prisma.user.create({
     data: {
@@ -85,17 +102,17 @@ export const userCreate: TUserCreate_db = async (args) => {
       },
     },
   })
-  const token = jwt.sign(
-    {
-      user_id: user.id,
-      email,
-    },
-    env.JWT_SECRET as Secret,
-    {
-      expiresIn: '2h',
-    },
-  )
-  user.token = token
+  // const token = jwt.sign(
+  //   {
+  //     user_id: user.id,
+  //     email,
+  //   },
+  //   env.JWT_SECRET as Secret,
+  //   {
+  //     expiresIn: '2h',
+  //   },
+  // )
+  // user.token = token
   return user
 }
 
@@ -110,18 +127,32 @@ export const login = async (args: { login: string; pass: string }) => {
 
   const user = await prisma.user.findUnique({
     where: nick ? { nick_name: nick } : { email: email },
-    select: { id: true },
+    select: {
+      id: true,
+      role: true,
+      nick_name: true,
+      email: true,
+    },
   })
   if (user) {
     const password = await prisma.userPass.findUnique({
       where: { user_id: user.id },
       select: { password: true },
     })
-    if (args.pass === password?.password) {
-      console.log('ok!')
-      return true
-    } else {
-      console.log('Неправильно введен пароль!')
+    if (password?.password) {
+      if (bcrypt.compareSync(args.pass, password.password)) {
+        const token = generatorJWTToken(
+          user.id,
+          user.role,
+          user.nick_name,
+          user.email,
+        )
+        console.log(JSON.stringify(token))
+        console.log('ok!')
+        return JSON.stringify(token)
+      } else {
+        console.log('Неправильно введен пароль!')
+      }
     }
   } else {
     console.log(
