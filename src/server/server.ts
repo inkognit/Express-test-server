@@ -1,22 +1,27 @@
 import express, { Express } from 'express'
-import authRoutes from './controllers/routes'
+import routes from './controllers/routes'
 import { env } from 'process'
+import cookieParser from 'cookie-parser'
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken'
 
 require('dotenv').config()
 
 const app: Express = express()
+
 app.use(express.json())
+app.use(cookieParser())
+
 app.use((req, res, next) => {
-  console.log('start')
-  // извлечь payload и закинуть в "хранилище". к этому хранилищу имеет доступ каждый мидл(express context)
+  const payload = Object.assign((jwt.decode(req.cookies.auth) as object) || {})
+  req.body = payload
+
   next()
 })
-app.use('/', authRoutes)
-app.use('/about.html', authRoutes)
-app.use('/auth.html', authRoutes)
-app.use('/registration.html', authRoutes)
-// app.use('/json', authRoutes)
-app.use('/user.html', authRoutes)
+app.use('/', routes)
+app.use('/about.html', routes)
+app.use('/auth.html', routes)
+app.use('/registration.html', routes)
+app.use('/user.html', routes)
 
 const PORT = env.PORT ?? 4200
 

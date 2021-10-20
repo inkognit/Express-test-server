@@ -172,7 +172,7 @@
       const buttonEl = document.getElementById('Auth')
       buttonEl.addEventListener('click', async () => {
         console.log(data)
-        const res = await fetch('/login', {
+        const req = await fetch('/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),

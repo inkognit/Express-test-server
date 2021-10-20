@@ -1,7 +1,9 @@
 import express from 'express'
+var cookieParser = require('cookie-parser')
 const router = express.Router()
+router.use(cookieParser())
 
-const PATH = (__dirname: any): string => {
+export const PATH = (__dirname: any): string => {
   const path = __dirname.split('/')
   const newPath = path.slice(0, path.length - 2)
   return newPath.join('/')
@@ -10,6 +12,9 @@ const PATH = (__dirname: any): string => {
 export const get = (rout: string, filePath: string) => {
   return router.get(rout, async (req, res) => {
     res.contentType('text/html')
+    const user_id = req.body.user_id
+    console.log('req.body: ', user_id)
+
     res.status(200)
     res.sendFile(PATH(__dirname) + `/pages/` + filePath)
   })
@@ -18,15 +23,7 @@ export const get = (rout: string, filePath: string) => {
 export const post = (rout: string, func: any) => {
   return router.post(rout, async (req, res) => {
     res.contentType('application/json')
-    res.status(201)
-    func(req.body)
+    res.status(200)
+    func(req, res)
   })
 }
-
-// export const getAll = (req: any, res: any) => {
-//   res.status(200).json({})
-// }
-
-// export const create = (req: any, res: any) => {
-//   res.status(201).json({})
-// }

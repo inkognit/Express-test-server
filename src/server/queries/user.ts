@@ -9,24 +9,28 @@ import { PQV, PQVN } from '../generics'
 import bcrypt from 'bcryptjs'
 import jwt, { Secret } from 'jsonwebtoken'
 import { env } from 'process'
+import { check } from 'express-validator'
+import express from 'express'
+import cookieParser from 'cookie-parser'
+const router = express.Router()
 
+router.use(cookieParser())
 require('dotenv').config()
 
 const prisma = new PrismaClient()
 
-const generatorJWTToken = (
-  id: string,
+export const generatorJWTToken = (
+  user_id: string,
   roles: 'ADMIN' | 'USER' | 'WRITER',
   nick_name: string,
   email: string,
 ) => {
   const payload = {
-    id,
+    user_id,
     roles,
     nick_name,
     email,
   }
-
   return jwt.sign(payload, env.JWT_SECRET as Secret, {
     expiresIn: '24h',
   })
@@ -86,10 +90,29 @@ export type TUserCreate_db = PQVN<
   }
 >
 export const userCreate: TUserCreate_db = async (args) => {
-  const encryptedPassword = await bcrypt.hash(args.pass, 10)
+  if (args.pass.length < 9) {
+    alert('Короткий пароль!')
+    console.log('Короткий пароль!')
+    throw new Error('Короткий пароль!')
+  }
+  const oldUser = await prisma.user.findUnique({
+    where: { nick_name: args.nick_name },
+  })
+  if (!!oldUser) {
+    alert('Такой nickname уже существует!')
+    console.log('Такой nickname уже существует!')
+    throw new Error('Такой nickname уже существует!')
+  }
+  const oldEmail = await prisma.user.findUnique({
+    where: { email: args.email },
+  })
+  if (!!oldEmail) {
+    alert('Такой email уже существует!')
+    console.log('Такой email уже существует!')
+    throw new Error('Такой email уже существует!')
+  }
   //проверка пароля на длину, отсутствие лишних символов
-  //проверка на такой ник или емайл
-  //сообщить юзеру что поменять
+  const encryptedPassword = await bcrypt.hash(args.pass, 10)
   const user = await prisma.user.create({
     data: {
       nick_name: args.nick_name,
@@ -108,13 +131,20 @@ export const userCreate: TUserCreate_db = async (args) => {
   return user
 }
 
-export const login = async (args: { login: string; pass: string }) => {
+export const login = async (req: any, res: any) => {
+  // args: { login: string; pass: string }
+  const { login, pass } = req.body
   let email, nick
 
-  if (args.login.indexOf('@') > 0) {
-    email = args.login
+  check(login, 'Имя пользователя не может быть пустым!').notEmpty()
+  check(pass, 'Пароль должен быть от 8 символов')
+    .isLength({ min: 8 })
+    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%*#?&]/)
+
+  if (login.indexOf('@') > 0) {
+    email = login
   } else {
-    nick = args.login
+    nick = login
   }
   //библиотека для валидации данных
   const user = await prisma.user.findUnique({
@@ -132,23 +162,24 @@ export const login = async (args: { login: string; pass: string }) => {
       select: { password: true },
     })
     if (password?.password) {
-      if (bcrypt.compareSync(args.pass, password.password)) {
-        const token = generatorJWTToken(
+      if (bcrypt.compareSync(pass, password.password)) {
+        const tokenClear = generatorJWTToken(
           user.id,
           user.role,
           user.nick_name,
           user.email,
         )
-        console.log(JSON.stringify(token))
-        console.log('ok!')
+        const token = `${tokenClear}`
+        res.cookie('auth', token)
+        console.log('токен создан')
         //почитать про вывод ошибок на фронт
-        return JSON.stringify(token)
+        return res.json({ token: token })
       } else {
-        console.log('Неправильно введен пароль!')
+        throw new Error('Неправильно введен пароль!  ')
       }
     }
   } else {
-    console.log(
+    throw new Error(
       'Вы ввели неправильный логин или вашего аккаунта не существует!',
     )
   }
