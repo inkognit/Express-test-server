@@ -13,8 +13,8 @@ app.use(cookieParser())
 
 app.use((req, res, next) => {
   const payload = Object.assign((jwt.decode(req.cookies.auth) as object) || {})
-  req.body = payload
-
+  // req.body = payload
+  console.log(payload)
   next()
 })
 app.use('/', routes)
