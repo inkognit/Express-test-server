@@ -38,7 +38,7 @@
                         <td bgcolor="#e6e6fa">
                             <h3>Меню</h3>
                             <p>
-                                <a href="./auth.html">
+                                <a id="user_id" href="./auth.html">
                                     <span style="margin-left:5px;">login</span></a>
                             </p>
                             <p>
@@ -49,6 +49,10 @@
                                 <a href="./user.html">
                                     <span style="margin-left:5px;">Account</span></a>
                             </p>
+                            <p>
+
+                                <button id="exit" style="margin-left:5px;">exit</button>
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -56,7 +60,7 @@
                         <td bgcolor="#e6e6fa" align="center">
                             <h3>Общая информация</h3>
                             <p>Текст общей информации или реклама</p>
-                         
+
                         </td>
                     </tr>
                 </table>
@@ -65,17 +69,26 @@
                     style="width:100%; border-radius:5px;">
 
                     <tr>
-                
+
                         <th>
                             <h3>Подвал</h3>
-                    
+
                         </th>
                     </tr>
                 </table>
-             
+
             </td>
         </tr>
     </table>
+    <script>
+        const exit = document.getElementById('exit')
+        exit.addEventListener('click', async () => {
+            console.log("eeeee")
+
+            const res = await fetch('/exit', { method: 'POST', credentials: 'same-origin' })
+        })
+
+    </script>
 </body>
 
 </html>
