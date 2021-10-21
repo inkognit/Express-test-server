@@ -12,9 +12,12 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use((req, res, next) => {
-  const payload = Object.assign((jwt.decode(req.cookies.auth) as object) || {})
-  // req.body = payload
-  console.log(payload)
+  if (req.cookies.auth) {
+    const payload = Object.assign(jwt.decode(req.cookies.auth) as object)
+    console.log('server объект полный')
+    req.body = payload
+  }
+
   next()
 })
 app.use('/', routes)
