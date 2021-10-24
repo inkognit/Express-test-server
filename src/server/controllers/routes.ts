@@ -9,19 +9,20 @@ const router = express.Router()
 router.use(cookieParser())
 
 router.use(get('/', 'accountPage/mainPage.html'))
-router.use(get('/registration.html', 'accountPage/registration.html'))
-router.use(get('/user.html', 'accountPage/user.html'))
+router.use(get('/registration', 'accountPage/registration.html'))
+router.use(get('/user', 'accountPage/user.html'))
 
 router.use(post('/create_user', userCreate))
 
-router.get('/loginPage.html', async (req, res) => {
+router.get('/login', async (req, res) => {
   res.contentType('text/html')
   res.status(200)
-  const user_id = req.cookies.auth
-  if (!user_id) {
+  const token = req.cookies.auth
+  if (!token) {
     res.sendFile(PATH(__dirname) + `/pages/accountPage/loginPage.html`)
   } else {
-    res.send('Вы уже авторизированы!')
+    // res.send('Вы уже прошли этап аутентификации')
+    return res.redirect('/')
   }
 })
 
@@ -40,7 +41,7 @@ router.post('/exit', async (req, res) => {
   res.sendStatus(201)
 })
 
-router.get('/about.html', async (req, res) => {
+router.get('/about', async (req, res) => {
   res.contentType('text/html')
   res.sendFile(PATH(__dirname) + `/pages/accountPage/about.html`)
 })
