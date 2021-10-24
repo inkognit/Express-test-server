@@ -62,10 +62,10 @@ export const users: TPageUsers_db = async (args) => {
   return { users, countWhere, countAll }
 }
 
-export type TPageUser_db = PQV<TPageUser_item, TPageUser_vars>
-export const user: TPageUser_db = async (args) => {
+export const user = async (req: any, res: any) => {
+  const { user_id } = req.body
   const user = await prisma.user.findUnique({
-    where: { id: args.id },
+    where: { id: user_id },
     select: {
       id: true,
       nick_name: true,
@@ -74,7 +74,7 @@ export const user: TPageUser_db = async (args) => {
       birthday: true,
     },
   })
-  return { ...user }
+  return user
 }
 
 export type TUserCreate_db = PQVN<

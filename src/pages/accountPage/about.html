@@ -8,5 +8,14 @@
   </head>
   <body>
     <h1>about</h1>
+    <script>
+      ;(async () => {
+        const data = await fetch('/about-data', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        console.log(await data.json())
+      })()
+    </script>
   </body>
 </html>
