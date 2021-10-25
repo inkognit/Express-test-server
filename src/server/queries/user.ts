@@ -12,6 +12,7 @@ import { env } from 'process'
 import { check } from 'express-validator'
 import express from 'express'
 import cookieParser from 'cookie-parser'
+import { AUTHNAME } from '../const'
 const router = express.Router()
 
 router.use(cookieParser())
@@ -170,10 +171,10 @@ export const login = async (req: any, res: any) => {
           user.email,
         )
         const token = `${tokenClear}`
-        res.cookie('auth', token)
+        res.cookie(AUTHNAME, token)
         console.log('токен создан')
         //почитать про вывод ошибок на фронт
-        return res.json({ token: token })
+        return res.json({ token })
       } else {
         throw new Error('Неправильно введен пароль!  ')
       }
