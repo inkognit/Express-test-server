@@ -3,7 +3,6 @@ import routes from './controllers/routes'
 import { env } from 'process'
 import cookieParser from 'cookie-parser'
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken'
-// const chunk = require('chunk')
 
 require('dotenv').config()
 
