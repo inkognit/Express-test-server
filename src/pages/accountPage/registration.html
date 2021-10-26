@@ -136,7 +136,19 @@
         })
         const res = await response.json()
         console.log(res)
-
+        if (response.status < 299) {
+          window.location.href = '/user'
+        } else if (response.status == 455) {
+          alert('Такой nickname уже существует! ')
+        } else if (response.status == 456) {
+          alert('Такой email уже существует!')
+        } else if (response.status == 457) {
+          alert(
+            'Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!',
+          )
+        } else {
+          alert('Error: ', response.status)
+        }
         const el = document.getElementById('data')
         el.innerHTML = `<div style="color:red">${JSON.stringify(data)}</div>`
       })

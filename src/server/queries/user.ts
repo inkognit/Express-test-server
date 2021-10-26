@@ -90,31 +90,59 @@ export type TUserCreate_db = PQVN<
     pass: any
   }
 >
-export const userCreate: TUserCreate_db = async (args) => {
+export const userCreate = async (
+  req: {
+    body: {
+      nick_name: string
+      first_name: string | ''
+      last_name: string | ''
+      description: string | ''
+      birthday: Date
+      email: string
+      pass: string
+    }
+  },
+  res: any,
+) => {
+  const {
+    nick_name,
+    first_name,
+    last_name,
+    description,
+    birthday,
+    email,
+    pass,
+  } = req.body
   const existUser = await prisma.user.findUnique({
-    where: { nick_name: args.nick_name },
+    where: { nick_name },
   })
-  if (!!existUser) throw new Error('Такой nickname уже существует!')
+  if (existUser) {
+    res.status(455).json({ error: 'Такой nickname уже существует!' })
+  }
 
   const existEmail = await prisma.user.findUnique({
-    where: { email: args.email },
+    where: { email },
   })
-  if (existEmail) throw new Error('Такой email уже существует!')
-
-  if (args.pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
-    throw new Error(
-      'Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!',
-    )
+  if (existEmail) {
+    res.status(456).json({ error: 'Такой email уже существует!' })
   }
-  const encryptedPassword = await bcrypt.hash(args.pass, 10)
+
+  if (pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
+    res.status(457).json({
+      error:
+        'Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!',
+    })
+  }
+
+  const encryptedPassword = await bcrypt.hash(pass, 10)
   const user = await prisma.user.create({
     data: {
-      nick_name: args.nick_name,
-      first_name: args.first_name,
-      last_name: args.last_name,
-      description: args.description,
-      birthday: new Date(args.birthday),
-      email: args.email,
+      nick_name,
+      first_name,
+      last_name,
+      description,
+      birthday: new Date(birthday),
+      email,
       password: {
         create: {
           password: encryptedPassword,
@@ -127,12 +155,12 @@ export const userCreate: TUserCreate_db = async (args) => {
 
 export const login = async (req: any, res: any) => {
   const { login, pass } = req.body
-  let email, nick
+  let email, nick_name
 
   if (login.match(/^[^\s@]+@[^\s@]+$/)) {
     email = login
   } else {
-    nick = login
+    nick_name = login
   }
 
   // if (pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
@@ -142,7 +170,7 @@ export const login = async (req: any, res: any) => {
   // }
 
   const user = await prisma.user.findUnique({
-    where: nick ? { nick_name: nick } : { email: email },
+    where: nick_name ? { nick_name } : { email },
     select: {
       id: true,
       role: true,
@@ -183,6 +211,10 @@ export const login = async (req: any, res: any) => {
       }
     }
   } else {
+    res.status(465).json({
+      message: 'bad log',
+      error: 'Неправильно введен login!  !!! !!!',
+    })
     throw new Error(
       'Вы ввели неправильный логин или вашего аккаунта не существует!',
     )
