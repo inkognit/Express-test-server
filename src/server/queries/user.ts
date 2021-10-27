@@ -12,6 +12,7 @@ import { env } from 'process'
 import { check } from 'express-validator'
 import express from 'express'
 import cookieParser from 'cookie-parser'
+import { AUTHNAME } from '../const'
 const router = express.Router()
 
 router.use(cookieParser())
@@ -62,10 +63,10 @@ export const users: TPageUsers_db = async (args) => {
   return { users, countWhere, countAll }
 }
 
-export type TPageUser_db = PQV<TPageUser_item, TPageUser_vars>
-export const user: TPageUser_db = async (args) => {
+export const user = async (req: any, res: any) => {
+  const { user_id } = req.body
   const user = await prisma.user.findUnique({
-    where: { id: args.id },
+    where: { id: user_id },
     select: {
       id: true,
       nick_name: true,
@@ -74,7 +75,7 @@ export const user: TPageUser_db = async (args) => {
       birthday: true,
     },
   })
-  return { ...user }
+  return user
 }
 
 export type TUserCreate_db = PQVN<
@@ -89,38 +90,59 @@ export type TUserCreate_db = PQVN<
     pass: any
   }
 >
-export const userCreate: TUserCreate_db = async (args) => {
-  if (args.pass.length < 9) {
-    alert('Короткий пароль!')
-    console.log('Короткий пароль!')
-    throw new Error('Короткий пароль!')
-  }
-  const oldUser = await prisma.user.findUnique({
-    where: { nick_name: args.nick_name },
+export const userCreate = async (
+  req: {
+    body: {
+      nick_name: string
+      first_name: string | ''
+      last_name: string | ''
+      description: string | ''
+      birthday: Date
+      email: string
+      pass: string
+    }
+  },
+  res: any,
+) => {
+  const {
+    nick_name,
+    first_name,
+    last_name,
+    description,
+    birthday,
+    email,
+    pass,
+  } = req.body
+  const existUser = await prisma.user.findUnique({
+    where: { nick_name },
   })
-  if (!!oldUser) {
-    alert('Такой nickname уже существует!')
-    console.log('Такой nickname уже существует!')
-    throw new Error('Такой nickname уже существует!')
+  if (existUser) {
+    res.status(455).json({ error: 'Такой nickname уже существует!' })
   }
-  const oldEmail = await prisma.user.findUnique({
-    where: { email: args.email },
+
+  const existEmail = await prisma.user.findUnique({
+    where: { email },
   })
-  if (!!oldEmail) {
-    alert('Такой email уже существует!')
-    console.log('Такой email уже существует!')
-    throw new Error('Такой email уже существует!')
+  if (existEmail) {
+    res.status(456).json({ error: 'Такой email уже существует!' })
   }
-  //проверка пароля на длину, отсутствие лишних символов
-  const encryptedPassword = await bcrypt.hash(args.pass, 10)
+
+  if (pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
+    res.status(457).json({
+      error:
+        'Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!',
+    })
+  }
+
+  const encryptedPassword = await bcrypt.hash(pass, 10)
   const user = await prisma.user.create({
     data: {
-      nick_name: args.nick_name,
-      first_name: args.first_name,
-      last_name: args.last_name,
-      description: args.description,
-      birthday: new Date(args.birthday),
-      email: args.email,
+      nick_name,
+      first_name,
+      last_name,
+      description,
+      birthday: new Date(birthday),
+      email,
       password: {
         create: {
           password: encryptedPassword,
@@ -132,23 +154,23 @@ export const userCreate: TUserCreate_db = async (args) => {
 }
 
 export const login = async (req: any, res: any) => {
-  // args: { login: string; pass: string }
   const { login, pass } = req.body
-  let email, nick
+  let email, nick_name
 
-  check(login, 'Имя пользователя не может быть пустым!').notEmpty()
-  check(pass, 'Пароль должен быть от 8 символов')
-    .isLength({ min: 8 })
-    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%*#?&]/)
-
-  if (login.indexOf('@') > 0) {
+  if (login.match(/^[^\s@]+@[^\s@]+$/)) {
     email = login
   } else {
-    nick = login
+    nick_name = login
   }
-  //библиотека для валидации данных
+
+  // if (pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
+  //   throw new Error(
+  //     'Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!',
+  //   )
+  // }
+
   const user = await prisma.user.findUnique({
-    where: nick ? { nick_name: nick } : { email: email },
+    where: nick_name ? { nick_name } : { email },
     select: {
       id: true,
       role: true,
@@ -170,15 +192,29 @@ export const login = async (req: any, res: any) => {
           user.email,
         )
         const token = `${tokenClear}`
-        res.cookie('auth', token)
+        res.cookie(AUTHNAME, token)
         console.log('токен создан')
         //почитать про вывод ошибок на фронт
-        return res.json({ token: token })
+        return res.json({ token })
       } else {
-        throw new Error('Неправильно введен пароль!  ')
+        // res.status(466).send({
+        //
+        //     status: 466,
+        //     error: 'Неправильно введен пароль!  !!! !!!',
+        //
+        // })
+        res.status(466).json({
+          message: 'bad pass',
+          error: 'Неправильно введен пароль!  !!! !!!',
+        })
+        throw new Error('Неправильно введен пароль!  !!! !!!')
       }
     }
   } else {
+    res.status(465).json({
+      message: 'bad log',
+      error: 'Неправильно введен login!  !!! !!!',
+    })
     throw new Error(
       'Вы ввели неправильный логин или вашего аккаунта не существует!',
     )

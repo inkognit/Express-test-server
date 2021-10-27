@@ -38,15 +38,15 @@
                         <td bgcolor="#e6e6fa">
                             <h3>Меню</h3>
                             <p>
-                                <a id="user_id" href="./auth.html">
+                                <a  href="./login">
                                     <span style="margin-left:5px;">login</span></a>
                             </p>
                             <p>
-                                <a href="./about.html">
+                                <a href="./about">
                                     <span style="margin-left:5px;">about</span;></a>
                             </p>
                             <p>
-                                <a href="./user.html">
+                                <a href="./user">
                                     <span style="margin-left:5px;">Account</span></a>
                             </p>
                             <p>
@@ -83,8 +83,6 @@
     <script>
         const exit = document.getElementById('exit')
         exit.addEventListener('click', async () => {
-            console.log("eeeee")
-
             const res = await fetch('/exit', { method: 'POST', credentials: 'same-origin' })
         })
 

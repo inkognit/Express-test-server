@@ -21,10 +21,6 @@ app.use((req, res, next) => {
   next()
 })
 app.use('/', routes)
-app.use('/about.html', routes)
-app.use('/auth.html', routes)
-app.use('/registration.html', routes)
-app.use('/user.html', routes)
 
 const PORT = env.PORT ?? 4200
 
