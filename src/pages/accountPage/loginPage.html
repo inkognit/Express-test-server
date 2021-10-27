@@ -207,9 +207,9 @@ const show_hide_password=(target)=>{
         if(response.status < 299){
           window.location.href = '/'
         } else if (response.status == 465){
-          alert("неправильно введен login ")
+          alert("Неправильно введен Логин ")
         } else if (response.status == 466){
-          alert("неправильно введен pass ")
+          alert("Неправильно введен Пароль ")
         }
       } catch (err) {
         console.log('err: ',err)
