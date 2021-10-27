@@ -9,6 +9,7 @@
   "author": "michael",
   "license": "ISC",
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
     "@okta/jwt-verifier": "^2.1.0",
     "@prisma/client": "^3.2.1",
     "@types/jest": "^27.0.2",

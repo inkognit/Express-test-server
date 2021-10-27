@@ -44,6 +44,7 @@ router.post('/exit', async (req, res) => {
 router.get('/about', async (req, res) => {
   res.contentType('text/html')
   res.sendFile(PATH(__dirname) + `/pages/accountPage/about.html`)
+  // res.sendFile(PATH(__dirname) + `/pages/main/main.tsx`)
 })
 
 router.get('/about-data', async (req, res) => {
