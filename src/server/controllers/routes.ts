@@ -21,7 +21,6 @@ router.get('/login', async (req, res) => {
   if (!token) {
     res.sendFile(PATH(__dirname) + `/pages/accountPage/loginPage.html`)
   } else {
-    // res.send('Вы уже прошли этап аутентификации')
     return res.redirect('/')
   }
 })
