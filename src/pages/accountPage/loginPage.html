@@ -204,12 +204,14 @@ const show_hide_password=(target)=>{
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         })
+        const data2 = await response.json()
+        console.log(data2.error)
         if(response.status < 299){
           window.location.href = '/'
         } else if (response.status == 465){
-          alert("Неправильно введен Логин ")
+          alert(data2.error)
         } else if (response.status == 466){
-          alert("Неправильно введен Пароль ")
+          alert(data2.error)
         }
       } catch (err) {
         console.log('err: ',err)
