@@ -131,6 +131,7 @@ export const userCreate = async (
             },
           },
         });
+        res.json(SYSTEM_MESSAGE.ok);
         return user;
       }
     }
