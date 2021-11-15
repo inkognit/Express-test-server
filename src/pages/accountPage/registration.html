@@ -134,23 +134,17 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         })
-        const res = await response.json()
-        console.log(res)
-        if (response.status < 299) {
+        const resp_message = await response.json()
+        console.log(resp_message)
+        if (resp_message.statusCode < 299) {
           window.location.href = '/user'
-        } else if (response.status == 455) {
-          alert('Такой nickname уже существует! ')
-        } else if (response.status == 456) {
-          alert('Такой email уже существует!')
-        } else if (response.status == 457) {
-          alert(
-            'Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!',
-          )
+        } else if (resp_message.statusCode == 403) {
+          alert(resp_message.message)
         } else {
           alert('Error: ', response.status)
         }
-        const el = document.getElementById('data')
-        el.innerHTML = `<div style="color:red">${JSON.stringify(data)}</div>`
+        // const el = document.getElementById('data')
+        // el.innerHTML = `<div style="color:red">${JSON.stringify(data)}</div>`
       })
     </script>
   </body>

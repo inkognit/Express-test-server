@@ -144,31 +144,15 @@
     <h1>Аутентификация пользователя</h1>
     <p>
       <label for="login">Логин или email</label>
-      <input 
-      type="text" 
-      name="login" 
-      placeholder="Логин или email" 
-      onkeyup="toObj(this)" 
-      required 
-      />
+      <input type="text" name="login" placeholder="Логин или email" onkeyup="toObj(this)" required />
     </p>
     <p>
     <div class="password">
       <label for="pass">Пароль</label>
-      <input 
-      type="password" 
-      name="pass" 
-      id="password-input" 
-      placeholder="Введите пароль" 
-      onkeyup="toObj(this)"
-      required 
-      .>
-      <a 
-        for='pass'
-        href="#" 
-        class="password-control" 
-        onclick="return show_hide_password(this);">  
-        <img src="https://cdn0.iconfinder.com/data/icons/feather/96/eye-16.png"/> 
+      <input type="password" name="pass" id="password-input" placeholder="Введите пароль" onkeyup="toObj(this)" required
+        .>
+      <a for='pass' href="#" class="password-control" onclick="return show_hide_password(this);">
+        <img src="https://cdn0.iconfinder.com/data/icons/feather/96/eye-16.png" />
       </a>
       </p>
     </div>
@@ -184,17 +168,17 @@
     const toObj = (e) => {
       data[e.name] = e.value
     }
-const show_hide_password=(target)=>{
-	const input = document.getElementById('password-input');
-	if (input.getAttribute('type') == 'password') {
-		target.classList.add('view');
-		input.setAttribute('type', 'text');
-	} else {
-		target.classList.remove('view');
-		input.setAttribute('type', 'password');
-	}
-	return false;
-}
+    const show_hide_password = (target) => {
+      const input = document.getElementById('password-input');
+      if (input.getAttribute('type') == 'password') {
+        target.classList.add('view');
+        input.setAttribute('type', 'text');
+      } else {
+        target.classList.remove('view');
+        input.setAttribute('type', 'password');
+      }
+      return false;
+    }
     const buttonEl = document.getElementById('Auth')
     buttonEl.addEventListener('click', async () => {
       console.log(data)
@@ -204,15 +188,19 @@ const show_hide_password=(target)=>{
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         })
-        if(response.status < 299){
+
+        const resp_message = await response.json()
+        console.log(resp_message)
+
+        if (resp_message.statusCode < 299) {
           window.location.href = '/'
-        } else if (response.status == 465){
-          alert("Неправильно введен Логин ")
-        } else if (response.status == 466){
-          alert("Неправильно введен Пароль ")
+        } else if (resp_message.statusCode == 403) {
+          alert(resp_message.message)
+        } else {
+          alert('Чтото пошло не так!')
         }
       } catch (err) {
-        console.log('err: ',err)
+        console.log('err: ', err)
       }
     })
   </script>
