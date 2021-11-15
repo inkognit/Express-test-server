@@ -103,40 +103,38 @@ export const userCreate = async (
     where: { nick_name },
   });
   if (existUser) {
-    res.status(455).json({ error: "Такой nickname уже существует!" });
-  }
-
-  const existEmail = await prisma.user.findUnique({
-    where: { email },
-  });
-  if (existEmail) {
-    res.status(456).json({ error: "Такой email уже существует!" });
-  }
-
-  if (!pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
-    res.status(457).json({
-      error:
-        "Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!",
+    res.json(SYSTEM_MESSAGE.error_nick_exist);
+  } else {
+    const existEmail = await prisma.user.findUnique({
+      where: { email },
     });
-  }
 
-  const encryptedPassword = await bcrypt.hash(pass, 10);
-  const user = await prisma.user.create({
-    data: {
-      nick_name,
-      first_name,
-      last_name,
-      description,
-      birthday: new Date(birthday),
-      email,
-      password: {
-        create: {
-          password: encryptedPassword,
-        },
-      },
-    },
-  });
-  return user;
+    if (existEmail) {
+      res.json(SYSTEM_MESSAGE.error_email_exist);
+    } else {
+      if (!pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
+        res.json(SYSTEM_MESSAGE.error_pass_valid);
+      } else {
+        const encryptedPassword = await bcrypt.hash(pass, 10);
+        const user = await prisma.user.create({
+          data: {
+            nick_name,
+            first_name,
+            last_name,
+            description,
+            birthday: new Date(birthday),
+            email,
+            password: {
+              create: {
+                password: encryptedPassword,
+              },
+            },
+          },
+        });
+        return user;
+      }
+    }
+  }
 };
 
 export const login = async (req: any, res: any) => {

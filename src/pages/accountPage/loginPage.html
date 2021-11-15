@@ -195,12 +195,8 @@
         if (resp_message.statusCode < 299) {
           window.location.href = '/'
         } else if (resp_message.statusCode == 403) {
-          switch(resp_message.code){
-            case 'INVALID_PASS': alert(resp_message.message)
-            case 'INVALID_LOG':alert(resp_message.message)
-          }
-    
-        } else  {
+          alert(resp_message.message)
+        } else {
           alert('Чтото пошло не так!')
         }
       } catch (err) {
