@@ -1,9 +1,8 @@
 import express from 'express'
 import { get, PATH, post } from './httpMethods'
 import { login, user, userCreate } from '../queries/user'
+import cookieParser from 'cookie-parser'
 
-// const authRouts = require('./authRouts')
-var cookieParser = require('cookie-parser')
 const router = express.Router()
 
 router.use(cookieParser())
@@ -21,7 +20,6 @@ router.get('/login', async (req, res) => {
   if (!token) {
     res.sendFile(PATH(__dirname) + `/pages/accountPage/loginPage.html`)
   } else {
-    // res.send('Вы уже прошли этап аутентификации')
     return res.redirect('/')
   }
 })

@@ -163,12 +163,6 @@ export const login = async (req: any, res: any) => {
     nick_name = login
   }
 
-  // if (pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
-  //   throw new Error(
-  //     'Пароль должен быть от 5 до 15 символов и содержать буквы латинского алфавита и цифры!',
-  //   )
-  // }
-
   const user = await prisma.user.findUnique({
     where: nick_name ? { nick_name } : { email },
     select: {
@@ -194,15 +188,8 @@ export const login = async (req: any, res: any) => {
         const token = `${tokenClear}`
         res.cookie(AUTHNAME, token)
         console.log('токен создан')
-        //почитать про вывод ошибок на фронт
         return res.json({ token })
       } else {
-        // res.status(466).send({
-        //
-        //     status: 466,
-        //     error: 'Неправильно введен пароль!  !!! !!!',
-        //
-        // })
         res.status(466).json({
           message: 'bad pass',
           error: 'Неправильно введен пароль!  !!! !!!',
