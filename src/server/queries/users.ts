@@ -2,7 +2,7 @@ import { PrismaClient } from ".prisma/client";
 const prisma = new PrismaClient();
 
 // export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>;
-export const users = async (args) => {
+export const users = async (args: any) => {
   const [users, countWhere, countAll] = await Promise.all([
     prisma.user.findMany({
       where: args.where || undefined,
@@ -42,7 +42,7 @@ export const user = async (req: any, res: any) => {
   return user;
 };
 
-export const user_up = async (args) => {
+export const user_up = async (args: any) => {
   const { id, ...data } = args;
   const user_up = await prisma.user.update({
     where: id,
