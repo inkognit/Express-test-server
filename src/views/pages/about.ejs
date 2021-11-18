@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../include/head.ejs')%>
+
+    <body>
+        <%- include('../include/headers.ejs'); %>
+            <div class="container">
+                <table border="1" cellpadding="10" style="width: 500px; border-radius: 5px;" bgcolor="#7FFFD4"
+                    align="center">
+                    <form class="container" method="post">
+                        <tr>
+                            <th>
+                                <label for="first_name">Ваше имя</label>
+                            </th>
+                            <th>
+                                <%- data.first_name %>
+                            </th>
+                            <th>
+                                <input type="text" name="first_name" placeholder="Имя" onkeyup="handleInput(this)"
+                                    required />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="last_name">Фамилия</label>
+                            </th>
+                            <th>
+                                <%- data.last_name %>
+                            </th>
+                            <th>
+                                <input type="text" name="last_name" placeholder="Фамилия" onkeyup="handleInput(this)"
+                                    required />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="nick_name">Ваш ник</label>
+                            </th>
+                            <th>
+                                <%- data.nick_name %>
+                            </th>
+                            <th>
+                                <input type="text" name="nick_name" placeholder="nickname" required
+                                    onkeyup="handleInput(this)" />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="description">О себе</label>
+                            </th>
+                            <th>
+                                <%- data.description %>
+                            </th>
+                            <th>
+                                <input type="text" name="description" placeholder="О себе"
+                                    onkeyup="handleInput(this)" />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="email">email</label>
+                            </th>
+                            <th>
+                                <%- data.email %>
+                            </th>
+                            <th>
+                                <input type="text" name="email" placeholder="email" required
+                                    onkeyup="handleInput(this)" />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="birthday">День рождения</label>
+                            </th>
+                            <th>
+                                <%- data.birthday %>
+                            </th>
+                            <th>
+                                <input type="date" name="birthday" placeholder="день рождения"
+                                    onkeyup="handleInput(this)" />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="pass">Пароль</label>
+                            </th>
+                            <th>
+
+                            </th>
+                            <th>
+                                <input type="text" name="pass" placeholder="Пароль" required
+                                    onkeyup="handleInput(this)" />
+                            </th>
+                        </tr>
+                    </form>
+                </table>
+                <p>
+                    <input id="2" type="submit" name="cansel" value="Отмена" />
+
+                    <input id="1" type="submit" name="user_up" value="Создать" />
+                </p>
+            </div>
+            <script>
+                const data = {}
+                function handleInput(e) {
+                    data[e.name] = e.value
+                }
+                const buttonEl = document.getElementById('1')
+                buttonEl.addEventListener('click', async () => {
+                    console.log(data)
+                    const response = await fetch('/user_update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    })
+                    const resp_message = await response.json()
+                    console.log(resp_message)
+                    if (resp_message.statusCode < 299) {
+                        window.location.href = '/user'
+                    } else if (resp_message.statusCode == 403) {
+                        alert(resp_message.message)
+                    } else {
+                        alert('Error: ', response.status)
+                    }
+                    // const el = document.getElementById('data')
+                    // el.innerHTML = `<div style="color:red">${JSON.stringify(data)}</div>`
+                })
+                const buttonEl2 = document.getElementById('2')
+                buttonEl2.addEventListener('click', async () => {
+                    window.location.href = '/user'
+                })
+            </script>
+    </body>
+    <%- include('../include/footer.ejs')%>
+
+</html>

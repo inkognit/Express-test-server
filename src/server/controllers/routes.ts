@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import { login, userCreate } from "../queries/user";
+import { user, user_up } from "../queries/users";
 import { get, PATH, post } from "./httpMethods";
 
 const router = express.Router();
@@ -30,6 +31,12 @@ router.post("/login", async (req, res) => {
   await login(req, res);
 });
 
+router.post("/user_up", async (req, res) => {
+  res.contentType("application/json");
+  res.status(201);
+  await user_up(req.body);
+});
+
 router.post("/exit", async (req, res) => {
   res.clearCookie("auth", {
     domain: req.hostname,
@@ -41,13 +48,20 @@ router.post("/exit", async (req, res) => {
 
 router.get("/about", async (req, res) => {
   // res.contentType("text/html");
-  res.render("navbar/navbar", { title: " home page" });
+  // const d = res.json(await user(req, res));
+  const data = await user(req, res);
+  res.render("pages/about", {
+    title: "About",
+    active: "about",
+    data: data,
+  });
+  console.log(data?.id);
 });
 
-// router.get("/user-data", async (req, res) => {
-//   res.contentType("application/json");
-//   const data = await user(req, res);
-//   res.json(data);
-// });
+router.get("/about-data", async (req, res) => {
+  res.contentType("application/json");
+  const data = await user(req, res);
+  res.json(data);
+});
 
 export default router;
