@@ -97,7 +97,7 @@
                 <p>
                     <input id="2" type="submit" name="cansel" value="Отмена" />
 
-                    <input id="1" type="submit" name="user_up" value="Создать" />
+                    <input id="1" type="submit" name="user_up" value="Обновить" />
                 </p>
             </div>
             <script>
@@ -107,14 +107,14 @@
                 }
                 const buttonEl = document.getElementById('1')
                 buttonEl.addEventListener('click', async () => {
-                    console.log(data)
-                    const response = await fetch('/user_update', {
+                    console.log('data: ',data,'\n',data.id)
+                    const response = await fetch('/user_up', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data),
                     })
                     const resp_message = await response.json()
-                    console.log(resp_message)
+        
                     if (resp_message.statusCode < 299) {
                         window.location.href = '/user'
                     } else if (resp_message.statusCode == 403) {

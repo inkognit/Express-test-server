@@ -28,7 +28,7 @@ export const users = async (args: any) => {
 };
 
 export const user = async (req: any, res: any) => {
-  const { user_id } = req.body;
+  const { user_id } = req.query;
   const user = await prisma.user.findUnique({
     where: { id: user_id },
     select: {
@@ -42,11 +42,18 @@ export const user = async (req: any, res: any) => {
   return user;
 };
 
-export const user_up = async (args: any) => {
-  const { id, ...data } = args;
+export const user_up = async (req: any, res: any) => {
+  const { user_id } = req.query;
+  // const { data } = req.body;
+  console.log(
+    "**********************************************************\nquery:",
+    req.body,
+    "\n",
+    user_id
+  );
   const user_up = await prisma.user.update({
-    where: id,
-    data,
+    where: { id: user_id },
+    data: req.body,
   });
   return user_up;
 };

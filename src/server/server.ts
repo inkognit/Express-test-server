@@ -18,8 +18,7 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   if (req.cookies.auth) {
     const payload = Object.assign(jwt.decode(req.cookies.auth) as object);
-    console.log("server объект полный");
-    req.body = payload;
+    req.query = { ...payload };
   }
 
   next();
