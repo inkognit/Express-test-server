@@ -23,7 +23,7 @@ router.post("/user_up", async (req, res) => {
   res.status(201);
   const ctx = { ...req.query, prisma };
   const args = req.body;
-  await user_up(ctx, args);
+  await user_up(ctx, args, res);
 });
 
 router.get("/login", async (req, res) => {

@@ -116,7 +116,7 @@
                     const resp_message = await response.json()
         
                     if (resp_message.statusCode < 299) {
-                        window.location.href = '/user'
+                        window.location.href = '/about'
                     } else if (resp_message.statusCode == 403) {
                         alert(resp_message.message)
                     } else {

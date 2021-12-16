@@ -1,5 +1,7 @@
 import { PrismaClient } from ".prisma/client";
-import { PQV } from "generics";
+import { PQVN } from "generics";
+import { TPageUser_item } from "../../pages/types";
+import { SYSTEM_MESSAGE } from "../const";
 
 // export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>;
 export const users = async (args: any) => {
@@ -28,20 +30,10 @@ export const users = async (args: any) => {
   return { users, countWhere, countAll };
 };
 
-type TData = {
-  id?: string;
-  nick_name?: string;
-  first_name?: string | null;
-  last_name?: string | null;
-  birthday?: Date | null;
-  description?: string | null;
-  email?: string;
-};
-
 export const user = async (req: any, res: any) => {
   const prisma = new PrismaClient();
   const { user_id } = req.query;
-  const user: TData | null = await prisma.user.findUnique({
+  const user: TPageUser_item | null = await prisma.user.findUnique({
     where: { id: user_id },
     select: {
       id: true,
@@ -56,12 +48,43 @@ export const user = async (req: any, res: any) => {
   return user;
 };
 
-type TPageUserUp_db = PQV<TData, TData>;
-export const user_up: TPageUserUp_db = async (props, data) => {
+type TPageUserUp_db = PQVN<TPageUser_item, TPageUser_item>;
+export const user_up: TPageUserUp_db = async (props, data, res) => {
   const { user_id, prisma } = props;
-  const user_up = await prisma.user.update({
-    where: { id: user_id },
-    data,
-  });
-  return user_up;
+  let ok: boolean = true;
+  if (data.nick_name) {
+    const existUser = await prisma.user.findUnique({
+      where: { nick_name: data.nick_name },
+    });
+    if (existUser) {
+      res.json(SYSTEM_MESSAGE.error_nick_exist);
+      ok = false;
+    }
+  }
+  if (data.email) {
+    const existEmail = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (existEmail) {
+      res.json(SYSTEM_MESSAGE.error_email_exist);
+      ok = false;
+    }
+  }
+  if (ok) {
+    const user_up = await prisma.user.update({
+      where: { id: user_id },
+      data: {
+        ...data,
+        birthday: new Date(data.birthday || ""),
+      },
+    });
+
+    return user_up;
+  }
+  let req = {
+    query: {
+      user_id,
+    },
+  };
+  return user(req, res);
 };
