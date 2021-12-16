@@ -12,8 +12,8 @@ export const PATH = (__dirname: any): string => {
 export const get = (rout: string, filePath: string) => {
   return router.get(rout, async (req, res) => {
     res.contentType("text/html");
-    const user_id = req.body.user_id;
-    console.log("methods req.body.user_id: ", user_id);
+    const user_id = req.query.user_id;
+    console.log("methods req.query.user_id: ", user_id);
 
     res.status(200);
     res.sendFile(PATH(__dirname) + `/pages/` + filePath);

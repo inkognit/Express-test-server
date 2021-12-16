@@ -1,8 +1,9 @@
 import { PrismaClient } from ".prisma/client";
-const prisma = new PrismaClient();
+import { PQV } from "generics";
 
 // export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>;
 export const users = async (args: any) => {
+  const prisma = new PrismaClient();
   const [users, countWhere, countAll] = await Promise.all([
     prisma.user.findMany({
       where: args.where || undefined,
@@ -27,9 +28,20 @@ export const users = async (args: any) => {
   return { users, countWhere, countAll };
 };
 
+type TData = {
+  id?: string;
+  nick_name?: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  birthday?: Date | null;
+  description?: string | null;
+  email?: string;
+};
+
 export const user = async (req: any, res: any) => {
+  const prisma = new PrismaClient();
   const { user_id } = req.query;
-  const user = await prisma.user.findUnique({
+  const user: TData | null = await prisma.user.findUnique({
     where: { id: user_id },
     select: {
       id: true,
@@ -37,23 +49,19 @@ export const user = async (req: any, res: any) => {
       first_name: true,
       last_name: true,
       birthday: true,
+      description: true,
+      email: true,
     },
   });
   return user;
 };
 
-export const user_up = async (req: any, res: any) => {
-  const { user_id } = req.query;
-  // const { data } = req.body;
-  console.log(
-    "**********************************************************\nquery:",
-    req.body,
-    "\n",
-    user_id
-  );
+type TPageUserUp_db = PQV<TData, TData>;
+export const user_up: TPageUserUp_db = async (props, data) => {
+  const { user_id, prisma } = props;
   const user_up = await prisma.user.update({
     where: { id: user_id },
-    data: req.body,
+    data,
   });
   return user_up;
 };

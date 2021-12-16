@@ -1,8 +1,10 @@
+import { PrismaClient } from ".prisma/client";
 import cookieParser from "cookie-parser";
 import express from "express";
 import { login, userCreate } from "../queries/user";
 import { user, user_up } from "../queries/users";
 import { get, PATH, post } from "./httpMethods";
+const prisma = new PrismaClient();
 
 const router = express.Router();
 
@@ -19,8 +21,9 @@ router.use(post("/create_user", userCreate));
 router.post("/user_up", async (req, res) => {
   res.contentType("application/json");
   res.status(201);
-  console.log("**********************\n req.body: ");
-  await user_up(req, res);
+  const ctx = { ...req.query, prisma };
+  const args = req.body;
+  await user_up(ctx, args);
 });
 
 router.get("/login", async (req, res) => {
