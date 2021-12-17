@@ -52,3 +52,15 @@ export type TPageUser = {
 export type TPageUser_vars = { id: string };
 
 export type TPageUser_load = QV<TPageUser, TPageUser_vars>;
+
+export type TUserUpdate_vars = {
+  id?: string;
+  nick_name?: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  birthday?: Date | null;
+  description?: string | null;
+  email?: string;
+  pass?: string;
+  new_pass?: string;
+};
