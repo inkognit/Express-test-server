@@ -20,7 +20,6 @@ model User {
   role        Role      @default(USER)
   password    UserPass?
   avatar      String    @default("")
-  token       String    @default("")
 }
 
 model UserPass {
@@ -29,6 +28,7 @@ model UserPass {
   updated_at DateTime @default(now()) @updatedAt
   user_id    String   
   user       User     @relation(fields: [user_id], references: [id])
+  @@unique([user_id, password])
 }
 
 model Orders {

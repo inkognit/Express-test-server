@@ -4,9 +4,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import { env } from "process";
-import { TPageUsers, TPageUsers_vars, TPageUser_item } from "../../pages/types";
 import { AUTHNAME, SYSTEM_MESSAGE } from "../const";
-import { PQV, PQVN } from "../generics";
 const router = express.Router();
 
 router.use(cookieParser());
@@ -23,59 +21,19 @@ export const generatorJWTToken = (user_id: string) => {
   });
 };
 
-export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>;
-export const users: TPageUsers_db = async (args) => {
-  const [users, countWhere, countAll] = await Promise.all([
-    prisma.user.findMany({
-      where: args.where || undefined,
-      orderBy: args.orderBy || undefined,
-      skip: args.skip || undefined,
-      take: args.take || undefined,
-      select: {
-        id: true,
-        created_at: true,
-        nick_name: true,
-        first_name: true,
-        last_name: true,
-        description: true,
-        birthday: true,
-      },
-    }),
-    prisma.user.count({
-      where: args.where || undefined,
-    }),
-    prisma.user.count(),
-  ]);
-  return { users, countWhere, countAll };
-};
+// export type TUserCreate_db = PQVN<
+//   TPageUser_item,
+//   {
+//     nick_name: string;
+//     first_name: string;
+//     last_name: string;
+//     description: string;
+//     birthday: Date | string;
+//     email: string;
+//     pass: any;
+//   }
+//   >;
 
-export const user = async (req: any, res: any) => {
-  const { user_id } = req.body;
-  const user = await prisma.user.findUnique({
-    where: { id: user_id },
-    select: {
-      id: true,
-      nick_name: true,
-      first_name: true,
-      last_name: true,
-      birthday: true,
-    },
-  });
-  return user;
-};
-
-export type TUserCreate_db = PQVN<
-  TPageUser_item,
-  {
-    nick_name: string;
-    first_name: string;
-    last_name: string;
-    description: string;
-    birthday: Date | string;
-    email: string;
-    pass: any;
-  }
->;
 export const userCreate = async (
   req: {
     body: {
@@ -168,14 +126,14 @@ export const login = async (req: any, res: any) => {
         const token = `${tokenClear}`;
         res.cookie(AUTHNAME, token);
         console.log("токен создан");
-        return res.json({ token });
+        return res.json({ token, ...SYSTEM_MESSAGE.ok });
       } else {
-        res.status(403).json(SYSTEM_MESSAGE.error_pass);
+        res.json(SYSTEM_MESSAGE.error_pass);
         throw new Error("Неправильно введен пароль!");
       }
     }
   } else {
-    res.status(403).json(SYSTEM_MESSAGE.error_log);
+    res.json(SYSTEM_MESSAGE.error_log);
     throw new Error(
       "Вы ввели неправильный логин или вашего аккаунта не существует!"
     );

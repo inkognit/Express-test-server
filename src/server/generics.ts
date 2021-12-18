@@ -1,21 +1,27 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 
-export type TQctx = {
-  user_id: string | undefined
-  is_admin: boolean
-}
+// export type TQctx = {
+//   user_id?: string;
+//   is_admin: boolean
+// };
 
 type TQprops = {
-  prisma: PrismaClient
-  ctx: TQctx
-}
+  user_id?: string;
+  // ctx: TQctx;
+  prisma: PrismaClient;
+};
 
-export type PQ<T> = (p: TQprops) => Promise<T>
+export type PQ<T> = (p: TQprops) => Promise<T>;
 export type PQV<T, V> = (
-  // p: TQprops,
+  p: TQprops,
   vars: V,
-) => Promise<T>
-export type PQVN<T, V> = (vars: V) => Promise<T | null>
+  res: { json: Function }
+) => Promise<T>;
+export type PQVN<T, V> = (
+  p: TQprops,
+  vars: V,
+  res: { json: Function }
+) => Promise<T | null>;
 
 // export type QV<T, V> = (prisma: T, args2: V) => T & V
 
