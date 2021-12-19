@@ -10,11 +10,11 @@ router.use(cookieParser());
 
 router.use(getClear("/", "main", "Main"));
 router.use(getClear("/registration", "registration", "Registration"));
+router.use(post("/create_user", userCreate));
+router.use(post("/login", login));
 
 router.use(get("/user", user, "user"));
 
-router.use(post("/create_user", userCreate));
 router.use(post("/user_up", user_up));
-router.use(post("/login", login));
 
 export default router;

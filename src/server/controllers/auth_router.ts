@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import express from "express";
-import { PATH } from "./httpMethods";
+import { login, userCreate } from "../queries/user";
+import { getClear, post } from "./httpMethods";
 
 const auth = express.Router();
 auth.use(cookieParser());
@@ -10,7 +11,10 @@ auth.get("/login", async (req, res) => {
   res.status(200);
   const token = req.cookies.auth;
   if (!token) {
-    res.sendFile(PATH(__dirname) + `/pages/accountPage/loginPage.html`);
+    res.render(`pages/login`, {
+      title: "Auth",
+      active: `login`,
+    });
   } else {
     return res.redirect("/");
   }
@@ -25,4 +29,7 @@ auth.post("/exit", async (req, res) => {
   res.sendStatus(201);
 });
 
+auth.use(getClear("/registration", "registration", "Registration"));
+auth.use(post("/create_user", userCreate));
+auth.use(post("/login", login));
 export default auth;
