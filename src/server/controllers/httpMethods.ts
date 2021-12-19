@@ -1,3 +1,4 @@
+import { prisma } from "@prisma/client";
 import express from "express";
 var cookieParser = require("cookie-parser");
 const router = express.Router();
@@ -23,7 +24,9 @@ export const get = (rout: string, filePath: string) => {
 export const post = (rout: string, func: any) => {
   return router.post(rout, async (req, res) => {
     res.contentType("application/json");
-    res.status(200);
-    await func(req, res);
+    res.status(201);
+    const ctx = { ...req.query, prisma };
+    const args = req.body;
+    await func(ctx, args, res);
   });
 };

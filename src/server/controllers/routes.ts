@@ -12,7 +12,6 @@ router.use(cookieParser());
 
 router.use(get("/", "accountPage/mainPage.html"));
 router.use(get("/registration", "accountPage/registration.html"));
-router.use(get("/user", "accountPage/user.html"));
 
 router.use(post("/create_user", userCreate));
 
@@ -26,6 +25,16 @@ router.post("/user_up", async (req, res) => {
   await user_up(ctx, args, res);
 });
 
+router.get("/about", async (req, res) => {
+  const ctx = { ...req.query, prisma };
+  const args = req.body;
+  const data = await user(ctx, args, res);
+  res.render("pages/about", {
+    title: "About",
+    active: "about",
+    data,
+  });
+});
 router.get("/login", async (req, res) => {
   res.contentType("text/html");
   res.status(200);
@@ -40,7 +49,9 @@ router.get("/login", async (req, res) => {
 router.post("/login", async (req, res) => {
   res.contentType("application/json");
   res.status(201);
-  await login(req, res);
+  const ctx = { ...req.query, prisma };
+  const args = req.body;
+  await login(ctx, args, res);
 });
 
 router.post("/exit", async (req, res) => {
@@ -50,22 +61,6 @@ router.post("/exit", async (req, res) => {
     path: "/",
   });
   res.sendStatus(201);
-});
-
-router.get("/about", async (req, res) => {
-  const data = await user(req, res);
-  res.render("pages/about", {
-    title: "About",
-    active: "about",
-    data,
-  });
-  console.log(data?.id);
-});
-
-router.get("/about-data", async (req, res) => {
-  res.contentType("application/json");
-  const data = await user(req, res);
-  res.json(data);
 });
 
 export default router;
