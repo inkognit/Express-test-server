@@ -1,6 +1,7 @@
-import { prisma } from "@prisma/client";
+import { PrismaClient } from ".prisma/client";
 import express from "express";
 var cookieParser = require("cookie-parser");
+const prisma = new PrismaClient();
 const router = express.Router();
 router.use(cookieParser());
 
@@ -10,12 +11,9 @@ export const PATH = (__dirname: any): string => {
   return newPath.join("/");
 };
 
-export const get = (rout: string, filePath: string) => {
+export const getClear = (rout: string, filePath: string) => {
   return router.get(rout, async (req, res) => {
     res.contentType("text/html");
-    const user_id = req.query.user_id;
-    console.log("methods req.query.user_id: ", user_id);
-
     res.status(200);
     res.sendFile(PATH(__dirname) + `/pages/` + filePath);
   });
@@ -28,5 +26,18 @@ export const post = (rout: string, func: any) => {
     const ctx = { ...req.query, prisma };
     const args = req.body;
     await func(ctx, args, res);
+  });
+};
+
+export const get = (rout: string, func: Function, path_render: string) => {
+  return router.get(rout, async (req, res) => {
+    const ctx = { ...req.query, prisma };
+    const args = req.body;
+    const data = await func(ctx, args, res);
+    res.render("pages/" + path_render, {
+      title: data.nick_name,
+      active: path_render,
+      data,
+    });
   });
 };
