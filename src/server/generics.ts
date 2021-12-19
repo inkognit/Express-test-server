@@ -20,7 +20,16 @@ export type PQV<T, V> = (
 export type PQVN<T, V> = (
   p: TQprops,
   vars: V,
-  res: { json: Function }
+  res?: {
+    json: Function;
+    cookie: Function;
+  }
+) => Promise<T | null>;
+
+export type PQVNU<T, V> = (
+  p: TQprops,
+  vars?: V,
+  res?: { json: Function }
 ) => Promise<T | null>;
 
 // export type QV<T, V> = (prisma: T, args2: V) => T & V

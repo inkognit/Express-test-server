@@ -2,8 +2,10 @@ import { PrismaClient } from ".prisma/client";
 import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
 import express from "express";
+import { PQVN, PQVNU } from "generics";
 import jwt, { Secret } from "jsonwebtoken";
 import { env } from "process";
+import { TPageUser_item } from "../../pages/types";
 import { AUTHNAME, SYSTEM_MESSAGE } from "../const";
 const router = express.Router();
 
@@ -21,67 +23,45 @@ export const generatorJWTToken = (user_id: string) => {
   });
 };
 
-// export type TUserCreate_db = PQVN<
-//   TPageUser_item,
-//   {
-//     nick_name: string;
-//     first_name: string;
-//     last_name: string;
-//     description: string;
-//     birthday: Date | string;
-//     email: string;
-//     pass: any;
-//   }
-//   >;
+export type TUserCreate_db = PQVNU<
+  TPageUser_item | undefined,
+  {
+    nick_name: string;
+    first_name: string;
+    last_name: string;
+    description: string;
+    birthday: Date | string;
+    email: string;
+    pass: any;
+  }
+>;
 
-export const userCreate = async (
-  req: {
-    body: {
-      nick_name: string;
-      first_name: string | "";
-      last_name: string | "";
-      description: string | "";
-      birthday: Date;
-      email: string;
-      pass: string;
-    };
-  },
-  res: any
-) => {
-  const {
-    nick_name,
-    first_name,
-    last_name,
-    description,
-    birthday,
-    email,
-    pass,
-  } = req.body;
+export const userCreate: TUserCreate_db = async ({ prisma }, data, res) => {
   const existUser = await prisma.user.findUnique({
-    where: { nick_name },
+    where: { nick_name: data?.nick_name },
   });
   if (existUser) {
-    res.json(SYSTEM_MESSAGE.error_nick_exist);
+    res?.json(SYSTEM_MESSAGE.error_nick_exist);
   } else {
     const existEmail = await prisma.user.findUnique({
-      where: { email },
+      where: { email: data?.email },
     });
 
     if (existEmail) {
-      res.json(SYSTEM_MESSAGE.error_email_exist);
+      res?.json(SYSTEM_MESSAGE.error_email_exist);
     } else {
-      if (!pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
-        res.json(SYSTEM_MESSAGE.error_pass_valid);
+      if (!data?.pass.match(/^[a-zA-Z0-9]{5,15}$/)) {
+        res?.json(SYSTEM_MESSAGE.error_pass_valid);
       } else {
-        const encryptedPassword = await bcrypt.hash(pass, 10);
+        const encryptedPassword = await bcrypt.hash(data?.pass, 10);
         const user = await prisma.user.create({
           data: {
-            nick_name,
-            first_name,
-            last_name,
-            description,
-            birthday: new Date(birthday),
-            email,
+            nick_name: data?.nick_name,
+            first_name: data?.first_name,
+            last_name: data?.last_name,
+            description: data?.description,
+            birthday: new Date(data?.birthday),
+            email: data?.email,
             password: {
               create: {
                 password: encryptedPassword,
@@ -89,15 +69,19 @@ export const userCreate = async (
             },
           },
         });
-        res.json(SYSTEM_MESSAGE.ok);
+        res?.json(SYSTEM_MESSAGE.ok);
         return user;
       }
     }
   }
 };
 
-export const login = async (req: any, res: any) => {
-  const { login, pass } = req.body;
+export type TLogin_db = PQVN<
+  Function | undefined,
+  { login: string; pass: string }
+>;
+export const login: TLogin_db = async ({ prisma }, data, res) => {
+  const { login, pass } = data;
   let email, nick_name;
 
   if (login.match(/^[^\s@]+@[^\s@]+$/)) {
@@ -124,16 +108,16 @@ export const login = async (req: any, res: any) => {
       if (bcrypt.compareSync(pass, password.password)) {
         const tokenClear = generatorJWTToken(user.id);
         const token = `${tokenClear}`;
-        res.cookie(AUTHNAME, token);
+        res?.cookie(AUTHNAME, token);
         console.log("токен создан");
-        return res.json({ token, ...SYSTEM_MESSAGE.ok });
+        return res?.json({ token, ...SYSTEM_MESSAGE.ok });
       } else {
-        res.json(SYSTEM_MESSAGE.error_pass);
+        res?.json(SYSTEM_MESSAGE.error_pass);
         throw new Error("Неправильно введен пароль!");
       }
     }
   } else {
-    res.json(SYSTEM_MESSAGE.error_log);
+    res?.json(SYSTEM_MESSAGE.error_log);
     throw new Error(
       "Вы ввели неправильный логин или вашего аккаунта не существует!"
     );

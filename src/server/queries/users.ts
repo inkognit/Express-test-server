@@ -1,18 +1,22 @@
-import { PrismaClient } from ".prisma/client";
 import bcrypt from "bcryptjs";
-import { PQVN } from "generics";
-import { TPageUser_item, TUserUpdate_vars } from "../../pages/types";
+import { PQVN, PQVNU } from "generics";
+import {
+  TPageUsers,
+  TPageUsers_vars,
+  TPageUser_item,
+  TPageUser_vars,
+  TUserUpdate_vars,
+} from "../../pages/types";
 import { SYSTEM_MESSAGE } from "../const";
 
-// export type TPageUsers_db = PQV<TPageUsers, TPageUsers_vars>;
-export const users = async (args: any) => {
-  const prisma = new PrismaClient();
+export type TPageUsers_db = PQVNU<TPageUsers, TPageUsers_vars>;
+export const users: TPageUsers_db = async ({ prisma }, args) => {
   const [users, countWhere, countAll] = await Promise.all([
     prisma.user.findMany({
-      where: args.where || undefined,
-      orderBy: args.orderBy || undefined,
-      skip: args.skip || undefined,
-      take: args.take || undefined,
+      where: args?.where || undefined,
+      orderBy: args?.orderBy || undefined,
+      skip: args?.skip || undefined,
+      take: args?.take || undefined,
       select: {
         id: true,
         created_at: true,
@@ -24,17 +28,16 @@ export const users = async (args: any) => {
       },
     }),
     prisma.user.count({
-      where: args.where || undefined,
+      where: args?.where || undefined,
     }),
     prisma.user.count(),
   ]);
   return { users, countWhere, countAll };
 };
-
-export const user = async (req: any, res: any) => {
-  const prisma = new PrismaClient();
-  const { user_id } = req.query;
-  const user: TPageUser_item | null = await prisma.user.findUnique({
+type TPageUser_db = PQVNU<TPageUser_item, TPageUser_vars>;
+export const user: TPageUser_db = async (props) => {
+  const { user_id, prisma } = props;
+  const user = await prisma.user.findUnique({
     where: { id: user_id },
     select: {
       id: true,
@@ -58,7 +61,7 @@ export const user_up: TPageUserUp_db = async (props, data, res) => {
       where: { nick_name: data.nick_name },
     });
     if (existUser) {
-      res.json(SYSTEM_MESSAGE.error_nick_exist);
+      res?.json(SYSTEM_MESSAGE.error_nick_exist);
       ok = false;
     }
   }
@@ -67,7 +70,7 @@ export const user_up: TPageUserUp_db = async (props, data, res) => {
       where: { email: data.email },
     });
     if (existEmail) {
-      res.json(SYSTEM_MESSAGE.error_email_exist);
+      res?.json(SYSTEM_MESSAGE.error_email_exist);
       ok = false;
     }
   }
@@ -86,26 +89,21 @@ export const user_up: TPageUserUp_db = async (props, data, res) => {
       });
       if (password) {
         if (bcrypt.compareSync(data.pass, password.password)) {
-          console.log("пароль изменен");
           await prisma.userPass.update({
             where: { user_id },
             data: { password: await bcrypt.hash(data.new_pass, 10) },
           });
+          res?.json(SYSTEM_MESSAGE.ok);
         } else {
-          console.log(
-            `3\n\n${bcrypt.compareSync(data.pass, password.password)}`
-          );
           ok = false;
-          res.json(SYSTEM_MESSAGE.error_pass);
+          res?.json(SYSTEM_MESSAGE.error_pass);
         }
       } else {
-        console.log(`2\n${await bcrypt.hash(data.pass, 10)}\n${data.pass}`);
         ok = false;
-        res.json(SYSTEM_MESSAGE.error_pass);
+        res?.json(SYSTEM_MESSAGE.error_pass);
       }
     } else {
-      console.log("1");
-      res.json(SYSTEM_MESSAGE.error_pass_valid);
+      res?.json(SYSTEM_MESSAGE.error_pass_valid);
       ok = false;
     }
   }
@@ -130,5 +128,5 @@ export const user_up: TPageUserUp_db = async (props, data, res) => {
       user_id,
     },
   };
-  return user(req, res);
+  return user(props);
 };
