@@ -85,11 +85,11 @@
                                 <label for="pass">Пароль</label>
                             </th>
                             <th>
- <input type="text" name="pass" placeholder="Старый пароль" 
+                                <input type="text" name="pass" placeholder="Старый пароль"
                                     onkeyup="handleInput(this)" />
                             </th>
                             <th>
-                                <input type="text" name="new_pass" placeholder="Новый пароль" 
+                                <input type="text" name="new_pass" placeholder="Новый пароль"
                                     onkeyup="handleInput(this)" />
                             </th>
                         </tr>
@@ -108,14 +108,14 @@
                 }
                 const buttonEl = document.getElementById('1')
                 buttonEl.addEventListener('click', async () => {
-                    console.log('data: ',data,'\n',data.id)
+                    console.log('data: ', data, '\n', data.id)
                     const response = await fetch('/user_up', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data),
                     })
                     const resp_message = await response.json()
-        
+
                     if (resp_message.statusCode < 299) {
                         window.location.href = '/about'
                     } else if (resp_message.statusCode == 403) {

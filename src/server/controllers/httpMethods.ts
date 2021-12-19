@@ -11,11 +11,14 @@ export const PATH = (__dirname: any): string => {
   return newPath.join("/");
 };
 
-export const getClear = (rout: string, filePath: string) => {
-  return router.get(rout, async (req, res) => {
+export const getClear = (rout: string, fileName: string, title: string) => {
+  return router.get(rout, async (_req, res) => {
     res.contentType("text/html");
     res.status(200);
-    res.sendFile(PATH(__dirname) + `/pages/` + filePath);
+    res.render(`pages/${fileName}`, {
+      title,
+      active: `${fileName}`,
+    });
   });
 };
 
@@ -33,11 +36,16 @@ export const get = (rout: string, func: Function, path_render: string) => {
   return router.get(rout, async (req, res) => {
     const ctx = { ...req.query, prisma };
     const args = req.body;
-    const data = await func(ctx, args, res);
-    res.render("pages/" + path_render, {
-      title: data.nick_name,
-      active: path_render,
-      data,
-    });
+
+    if (req.query.user_id) {
+      const data = await func(ctx, args, res);
+      res.render("pages/" + path_render, {
+        title: data.nick_name,
+        active: path_render,
+        data,
+      });
+    } else {
+      return res.redirect("/");
+    }
   });
 };
