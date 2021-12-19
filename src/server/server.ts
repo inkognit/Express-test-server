@@ -3,6 +3,7 @@ import express, { Express } from "express";
 import jwt from "jsonwebtoken";
 import path from "path";
 import { env } from "process";
+import auth_router from "./controllers/auth_router";
 import routes from "./controllers/routes";
 
 require("dotenv").config();
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/", routes);
+app.use("/", auth_router);
 
 const PORT = env.PORT ?? 4200;
 
