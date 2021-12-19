@@ -1,13 +1,13 @@
 import bcrypt from "bcryptjs";
 import { PQVN, PQVNU } from "generics";
+import { SYSTEM_MESSAGE } from "../const";
 import {
   TPageUsers,
   TPageUsers_vars,
   TPageUser_item,
   TPageUser_vars,
   TUserUpdate_vars,
-} from "../../pages/types";
-import { SYSTEM_MESSAGE } from "../const";
+} from "../types";
 
 export type TPageUsers_db = PQVNU<TPageUsers, TPageUsers_vars>;
 export const users: TPageUsers_db = async ({ prisma }, args) => {

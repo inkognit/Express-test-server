@@ -1,18 +1,15 @@
-import { PrismaClient } from ".prisma/client";
 import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
 import express from "express";
 import { PQVN, PQVNU } from "generics";
 import jwt, { Secret } from "jsonwebtoken";
 import { env } from "process";
-import { TPageUser_item } from "../../pages/types";
 import { AUTHNAME, SYSTEM_MESSAGE } from "../const";
+import { TPageUser_item } from "../types";
 const router = express.Router();
 
 router.use(cookieParser());
 require("dotenv").config();
-
-const prisma = new PrismaClient();
 
 export const generatorJWTToken = (user_id: string) => {
   const payload = {
